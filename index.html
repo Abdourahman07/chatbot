@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Assistant — Portrait interactif de l'Eau</title>
+  <style>
+    :root{font-family:Arial,Helvetica,sans-serif;color:#263238;background:#f7f9fa;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}button{cursor:pointer}
+    .shell{width:min(100%,580px);margin:0 auto;padding:12px;height:100dvh;min-height:360px;display:flex}
+    .panel{width:100%;display:flex;flex-direction:column;overflow:hidden;border:1px solid #d9e2e6;border-radius:13px;background:white;box-shadow:0 6px 24px #152c3b12}
+    .header{background:#223943;color:#fff;padding:15px 16px;display:flex;align-items:center;gap:12px}
+    .mark{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:#f0e222;color:#23303a;font-size:22px}
+    h1{margin:0;font-size:17px;line-height:1.3}.subtitle{font-size:12px;color:#d3e0e5;margin-top:3px}
+    .feed{flex:1;min-height:0;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#f6f9fa}
+    .msg{max-width:92%;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.5;padding:10px 13px;border-radius:12px}
+    .assistant{align-self:flex-start;background:white;border:1px solid #e1e8eb;border-bottom-left-radius:3px}
+    .visitor{align-self:flex-end;background:#eaf1c7;border-bottom-right-radius:3px}
+    .actions{display:flex;flex-wrap:wrap;gap:7px;padding:10px 13px;border-top:1px solid #e6ebef}
+    .quick{border:1px solid #b8c7cc;border-radius:18px;background:white;color:#233b46;font-size:12px;font-weight:600;padding:8px 11px}
+    .quick:hover,.quick:focus-visible{background:#f7f9e4;border-color:#88983e}
+    .compose{display:flex;gap:8px;padding:10px 12px 13px;border-top:1px solid #e6ebef}
+    input{min-width:0;flex:1;border:1px solid #cbd5d9;border-radius:9px;padding:12px;font-size:14px;outline-offset:2px}
+    .send{border:0;border-radius:9px;background:#f0e222;color:#19272f;font-weight:700;padding:10px 15px}
+    .send:hover{background:#e2d619}.foot{padding:0 12px 10px;color:#66777f;font-size:11px}
+    a{color:#065a77} .hidden{display:none!important}
+    .form{background:#fff;border:1px solid #dce5e8;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+    .form label{font-weight:600;font-size:12px}.form textarea,.form input{width:100%;flex:unset;border:1px solid #cbd5d9;border-radius:7px;padding:9px;font-size:13px}
+    textarea{resize:vertical;min-height:80px}.form .send{align-self:flex-start}
+    .status{font-size:12px;color:#657681}
+    @media(max-width:430px){.shell{padding:0;min-height:360px}.panel{border-radius:0;border:0}.header{padding:12px}.feed{padding:12px}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <section class="panel" aria-label="Assistant du Portrait interactif de l'Eau">
+    <header class="header"><div class="mark" aria-hidden="true">💧</div><div><h1>Assistant du Portrait de l'Eau</h1><div class="subtitle">Aide à la navigation et contact avec l'Agence</div></div></header>
+    <div id="feed" class="feed" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <nav class="actions" aria-label="Questions fréquentes" id="actions"></nav>
+    <form id="compose" class="compose"><input id="question" maxlength="500" autocomplete="off" placeholder="Posez votre question…" aria-label="Votre question" required><button class="send" type="submit">Envoyer</button></form>
+    <div class="foot">Assistant de navigation : vérifiez les informations techniques dans les données officielles du portrait.</div>
+  </section>
+</main>
+<script>
+"use strict";
+// À PERSONNALISER AVANT MISE EN LIGNE : adresse fonctionnelle autorisée par l'Agence.
+// La démonstration n'envoie rien à un serveur : elle ouvre la messagerie du visiteur.
+const CONFIG = {
+  contactEmail: "", // Exemple : "contact@votre-agence.fr" — renseigner une vraie adresse validée
+  privacyUrl: "",   // URL de la politique de confidentialité, facultative
+  portraitUrl: ""   // URL du Portrait interactif, facultative
+};
+const FAQ = [
+ {label:"Comment utiliser le portrait ?", keywords:["utiliser","commencer","guide","accueil","naviguer","navigation","fonctionnement","aide"], answer:"Le Portrait interactif de l'Eau est organisé en plusieurs rubriques. Depuis la page d'accueil, choisissez la thématique qui vous intéresse, puis utilisez les menus et outils proposés par la page pour consulter les cartes et les indicateurs."},
+ {label:"Risques liés à l'eau", keywords:["inondation","inondable","crue","risque","ruissellement","submersion"], answer:"Ouvrez la rubrique « Risques liés à l'eau » dans le menu du Portrait. Vous pourrez consulter les informations et cartes mises à disposition sur cette thématique. Si vous cherchez une couche précise, indiquez-moi son nom."},
+ {label:"Biodiversité et milieux humides", keywords:["biodiversite","humide","milieu","aquatique","ecosysteme","mare","zone humide"], answer:"Dans le menu du Portrait, sélectionnez la rubrique consacrée à la biodiversité et aux milieux humides ou aquatiques. Les données consultables dépendent des cartes publiées par l'Agence."},
+ {label:"Petit cycle de l'eau", keywords:["potable","assainissement","cycle","distribution","eau usee","reseau"], answer:"Pour les sujets liés au petit cycle de l'eau (eau potable, assainissement, etc.), rendez-vous dans la rubrique « Petit cycle de l'eau »."},
+ {label:"Usages de l'eau", keywords:["usage","prelevement","agriculture","industrie","consommation"], answer:"Choisissez la rubrique « Usages de l'Eau » pour explorer les informations publiées sur les utilisations de la ressource."},
+ {label:"Patrimoine lié à l'eau", keywords:["patrimoine","moulin","ouvrage","historique","canal"], answer:"La rubrique « Patrimoine lié à l'eau » rassemble les contenus que l'Agence a publiés sur cette thématique."},
+ {label:"Sélectionner un territoire", keywords:["commune","territoire","epci","sage","bassin","filtre","selectionner","intercommunalite"], answer:"Sur les pages qui proposent un sélecteur territorial, utilisez les menus de filtres pour choisir la commune, l'intercommunalité, le bassin versant ou le SAGE. Les filtres ne sont pas nécessairement disponibles dans toutes les rubriques."}
+];
+const feed=document.getElementById("feed"), actions=document.getElementById("actions"), compose=document.getElementById("compose"), field=document.getElementById("question");
+function message(text,who="assistant") { const div=document.createElement("div");div.className="msg "+who;div.textContent=text;feed.append(div);feed.scrollTop=feed.scrollHeight; }
+function normalize(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
+function answer(q){
+ const s=normalize(q);
+ if(/contact|agent|humain|telephone|mail|probleme|difficulte|signaler|erreur|bloque/.test(s)){showContact();return;}
+ let best=null,score=0;
+ for(const item of FAQ){const n=item.keywords.reduce((sum,w)=>sum+(s.includes(normalize(w))?1:0),0);if(n>score){score=n;best=item;}}
+ if(best){message(best.answer);return;}
+ message("Je n'ai pas de réponse suffisamment précise à cette question. Vous pouvez essayer l'un des thèmes proposés ci-dessous ou utiliser « Contacter l'Agence » pour décrire votre difficulté.");
+}
+function ask(q){message(q,"visitor");answer(q);}
+function showContact(){
+ message("Vous pouvez préparer un message à destination de l'Agence. Il sera ouvert dans votre logiciel de messagerie : aucun envoi automatique n'est effectué depuis ce chatbot.");
+ if(document.getElementById("contact-form"))return;
+ const form=document.createElement("form");form.className="form";form.id="contact-form";
+ const heading=document.createElement("strong");heading.textContent="Contacter l'Agence";form.append(heading);
+ const nameLabel=document.createElement("label");nameLabel.textContent="Votre nom (facultatif)";const name=document.createElement("input");name.maxLength=120;name.autocomplete="name";nameLabel.append(name);form.append(nameLabel);
+ const emailLabel=document.createElement("label");emailLabel.textContent="Votre adresse e-mail (facultatif)";const email=document.createElement("input");email.type="email";email.maxLength=200;email.autocomplete="email";emailLabel.append(email);form.append(emailLabel);
+ const detailLabel=document.createElement("label");detailLabel.textContent="Décrivez votre difficulté";const detail=document.createElement("textarea");detail.required=true;detail.maxLength=2000;detailLabel.append(detail);form.append(detailLabel);
+ const btn=document.createElement("button");btn.type="submit";btn.className="send";btn.textContent="Préparer l'e-mail";form.append(btn);
+ const status=document.createElement("div");status.className="status";status.textContent="Votre messagerie s'ouvrira pour confirmer l'envoi.";form.append(status);
+ form.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(!CONFIG.contactEmail){status.textContent="L'Agence doit d'abord configurer une adresse e-mail de contact dans CONFIG.contactEmail.";return;}
+  const subject="Assistance — Portrait interactif de l'Eau";
+  const body=`Bonjour,\n\nJe rencontre une difficulté avec le Portrait interactif de l'Eau.\n\nNom : ${name.value.trim()}\nE-mail : ${email.value.trim()}\n\nDescription :\n${detail.value.trim()}\n\nCordialement`;
+  window.location.href=`mailto:${encodeURIComponent(CONFIG.contactEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  status.textContent="Un brouillon doit s'ouvrir dans votre application de messagerie. Vérifiez-le et cliquez sur Envoyer. Si rien ne s'ouvre, configurez une application e-mail sur votre appareil.";
+ });
+ feed.append(form);feed.scrollTop=feed.scrollHeight;
+}
+for(const item of [FAQ[0],FAQ[1],FAQ[6]]){const btn=document.createElement("button");btn.className="quick";btn.type="button";btn.textContent=item.label;btn.addEventListener("click",()=>ask(item.label));actions.append(btn);}
+const contact=document.createElement("button");contact.className="quick";contact.type="button";contact.textContent="Contacter l'Agence";contact.addEventListener("click",()=>ask("Contacter l'Agence"));actions.append(contact);
+compose.addEventListener("submit",e=>{e.preventDefault();const q=field.value.trim();if(!q)return;field.value="";ask(q);field.focus();});
+message("Bonjour ! Je suis l'assistant du Portrait interactif de l'Eau. Je peux vous orienter vers les rubriques de l'outil et vous aider à contacter l'Agence en cas de difficulté. Comment puis-je vous aider ?");
+</script>
+</body>
+</html>
