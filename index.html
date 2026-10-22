@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Assistant — Portrait interactif de l’Eau</title><style>
-:root{font-family:Arial,Helvetica,sans-serif;color:#23343d;background:#eef1f3}*{box-sizing:border-box}body{margin:0;padding:0}button,input,textarea{font:inherit}button{cursor:pointer}.shell{width:100%;max-width:470px;height:100dvh;min-height:390px;max-height:850px;margin:auto;display:flex;flex-direction:column;background:#fff;box-shadow:0 8px 28px #1d343c22}.head{background:#213943;color:white;display:flex;gap:12px;align-items:center;padding:14px 16px;flex-shrink:0}.drop{background:#f0e222;color:#23343d;padding:9px;border-radius:10px;font-size:20px}.head strong{font-size:14px;display:block}.head small{font-size:11px;color:#cfe1e4}.head .reset{margin-left:auto;background:none;color:#e7eeee;border:1px solid #6c848b;padding:6px 9px;border-radius:7px;font-size:12px}.messages{flex:1;overflow-y:auto;padding:18px 15px;background:#f4f7f8;display:flex;flex-direction:column;gap:12px}.msg{max-width:93%;padding:12px 13px;border-radius:13px;font-size:13px;line-height:1.58;white-space:pre-wrap;overflow-wrap:anywhere}.bot{align-self:flex-start;background:white;border:1px solid #dce5e9;border-top-left-radius:3px}.user{align-self:flex-end;background:#f0e222;color:#1e2c34;border-top-right-radius:3px}.msg a{color:#145e87}.label{font-size:11px;color:#61727b}.quick{padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid #e8ecee;max-height:108px;overflow:auto}.quick button{border:1px solid #cddce2;border-radius:17px;background:white;color:#244050;padding:7px 10px;font-size:11px}.quick button:hover{background:#f5f0c5}.entry{display:flex;gap:7px;padding:10px;border-top:1px solid #e4eaed}.entry textarea{flex:1;resize:none;min-height:43px;max-height:100px;padding:10px;border:1px solid #ccd7da;border-radius:9px;font-size:13px}.entry button{border:0;background:#f0e222;border-radius:9px;padding:0 13px;font-weight:bold;color:#1b262b}.foot{font-size:10px;color:#66777f;padding:0 13px 10px}.busy{opacity:.7}a{color:#0b5f89}@media(min-width:600px){body{padding:8px}.shell{border-radius:13px;overflow:hidden;height:calc(100dvh - 16px)}}
-</style></head><body><main class="shell" aria-label="Assistant du Portrait de l'Eau"><header class="head"><span class="drop" aria-hidden="true">💧</span><div><strong>Assistant du Portrait de l’Eau</strong><small>Aide à l’utilisation du portrait</small></div><button class="reset" id="reset" type="button">Effacer</button></header><section id="messages" class="messages" aria-live="polite"></section><nav class="quick" aria-label="Questions proposées"><button data-question="Où trouver les couches et la légende ?">Couches & légende</button><button data-question="Comment sélectionner un SAGE, une intercommunalité ou un bassin versant ?">Filtres</button><button data-question="Où voir les stations d’épuration ?">Stations d’épuration</button><button data-question="Comment utiliser les outils de la carte ?">Outils de la carte</button><button data-question="Comment contacter l'Agence ?">Contacter l’Agence</button></nav><form id="form" class="entry"><textarea id="question" rows="2" maxlength="2000" placeholder="Posez votre question sur le portrait…" aria-label="Votre question" required></textarea><button id="send" type="submit">Envoyer</button></form><div class="foot">Assistant de navigation du Portrait interactif de l’Eau · Agence du Pays de Saint-Omer</div></main><script>
+:root{font-family:Arial,Helvetica,sans-serif;color:#23343d;background:#eef1f3}*{box-sizing:border-box}body{margin:0;padding:0}button,input,textarea{font:inherit}button{cursor:pointer}.shell{width:100%;max-width:470px;height:100dvh;min-height:390px;max-height:850px;margin:auto;display:flex;flex-direction:column;background:#fff;box-shadow:0 8px 28px #1d343c22}.head{background:#213943;color:white;display:flex;gap:12px;align-items:center;padding:14px 16px;flex-shrink:0}.drop{background:#f0e222;color:#23343d;padding:9px;border-radius:10px;font-size:20px}.head strong{font-size:14px;display:block}.head small{font-size:11px;color:#cfe1e4}.head .reset{margin-left:auto;background:none;color:#e7eeee;border:1px solid #6c848b;padding:6px 9px;border-radius:7px;font-size:12px}.messages{flex:1;overflow-y:auto;padding:18px 15px;background:#f4f7f8;display:flex;flex-direction:column;gap:12px}.msg{max-width:93%;padding:12px 13px;border-radius:13px;font-size:13px;line-height:1.58;white-space:pre-wrap;overflow-wrap:anywhere}.bot{align-self:flex-start;background:white;border:1px solid #dce5e9;border-top-left-radius:3px}.user{align-self:flex-end;background:#f0e222;color:#1e2c34;border-top-right-radius:3px}.msg a{color:#145e87}.label{font-size:11px;color:#61727b}.quick{padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid #e8ecee;max-height:108px;overflow:auto}.quick button{border:1px solid #cddce2;border-radius:17px;background:white;color:#244050;padding:7px 10px;font-size:11px}.quick button:hover{background:#f5f0c5}.entry{display:flex;gap:7px;padding:10px;border-top:1px solid #e4eaed}.entry textarea{flex:1;resize:none;min-height:43px;max-height:100px;padding:10px;border:1px solid #ccd7da;border-radius:9px;font-size:13px}.entry button{border:0;background:#f0e222;border-radius:9px;padding:0 13px;font-weight:bold;color:#1b262b}.busy{opacity:.7}a{color:#0b5f89}@media(min-width:600px){body{padding:8px}.shell{border-radius:13px;overflow:hidden;height:calc(100dvh - 16px)}}
+</style></head><body><main class="shell" aria-label="Assistant du Portrait de l'Eau"><header class="head"><span class="drop" aria-hidden="true">💧</span><div><strong>Assistant du Portrait de l’Eau</strong><small>Aide à l’utilisation du portrait</small></div><button class="reset" id="reset" type="button">Effacer</button></header><section id="messages" class="messages" aria-live="polite"></section><nav class="quick" aria-label="Questions proposées"><button data-question="Où trouver les couches et la légende ?">Couches & légende</button><button data-question="Comment sélectionner un SAGE, une intercommunalité ou un bassin versant ?">Filtres</button><button data-question="Comment utiliser les outils de la carte ?">Outils de la carte</button><button data-question="Comment contacter l'Agence ?">Contacter l’Agence</button></nav><form id="form" class="entry"><textarea id="question" rows="2" maxlength="2000" placeholder="Posez votre question sur le portrait…" aria-label="Votre question" required></textarea><button id="send" type="submit">Envoyer</button></form></main><script>
 const CONTACT_URL = 'https://www.aud-stomer.fr/contact/';
 const messages = document.getElementById('messages');
 const field = document.getElementById('question');
@@ -22,44 +22,59 @@ function normalize(value) {
 function includesAny(text, words) { return words.some(word => text.includes(word)); }
 function respond(question) {
   const t = normalize(question);
-  // Le chatbot traite uniquement l'utilisation du portrait, sans consulter les données.
-  if (includesAny(t, ['analyse', 'synthese', 'diagnostic', 'rapport', 'calcule', 'calculer', 'statistique', 'comparaison', 'comparer', 'combien', 'pourcentage', 'superficie', 'surface totale', 'evolution'])) {
-    return 'Je suis l’assistant d’utilisation du Portrait interactif de l’Eau. Je peux vous montrer où consulter les cartes, les couches et les informations affichées, mais je ne réalise pas d’analyses, de calculs ni de synthèses. Pour une étude ou une interprétation des données, utilisez « Contactez-nous » en haut à droite du portail.';
+  const agency = 'Pour cette demande, je vous invite à contacter l’Agence en cliquant sur « Contactez-nous » en haut à droite du portail : ' + CONTACT_URL;
+
+  // Questions hors assistance à l'utilisation : orientation vers l'Agence.
+  if (includesAny(t, [
+    'analyse', 'analyser', 'synthese', 'diagnostic', 'rapport', 'etude',
+    'statistique', 'chiffre', 'pourcentage', 'superficie', 'calcul',
+    'comparer', 'comparaison', 'evolution', 'prevision', 'interpretation',
+    'donnees brutes', 'telecharger des donnees', 'export de donnees',
+    'prix', 'devis', 'recrutement', 'emploi', 'actualite', 'meteo'
+  ])) return agency;
+
+  if (includesAny(t, ['contact', 'technicien', 'probleme', 'bug', 'difficulte', 'ne marche pas', 'erreur', 'assistance', 'bloque', 'panne'])) {
+    return 'Pour signaler une difficulté, cliquez sur « Contactez-nous » en haut à droite du portail. Précisez la rubrique utilisée et décrivez le problème. Si possible, ajoutez une capture d’écran.\n' + CONTACT_URL;
   }
-  if (includesAny(t, ['station d epuration', 'station epuration', 'step', 'assainissement'])) {
-    return 'Pour retrouver les stations d’épuration :\n1. Ouvrez la page cartographique concernée.\n2. Regardez dans le panneau « Enjeux » situé à droite.\n3. Repérez la rubrique « Station d’épuration ».\n4. Si la couche est disponible et activée, consultez ses symboles sur la carte.\n5. Cliquez sur une station si une fiche d’information est proposée.';
-  }
-  if (includesAny(t, ['cours d eau', 'riviere', 'reseau hydrographique', 'hydrographie'])) {
-    return 'Pour voir le réseau hydrographique :\n1. Accédez à la carte de la thématique concernée.\n2. Dans le panneau de droite, recherchez « Périmètres & Habillage », puis « Réseau hydrographique » ou « Cours d’eau ».\n3. Utilisez l’outil de couches si nécessaire.\n4. Zoomez sur la zone souhaitée pour mieux distinguer les cours d’eau.';
-  }
-  if (includesAny(t, ['sage', 'intercommunal', 'epci', 'bassin versant', 'filtre', 'filtrer', 'selectionner un territoire', 'choisir un territoire'])) {
-    return 'Pour sélectionner un territoire :\n1. Ouvrez une rubrique cartographique.\n2. Dans le panneau à gauche, choisissez « Filtrer par SAGE », « Filtrer par intercommunalités » ou « Filtre par bassin versant ».\n3. Utilisez la zone « Recherche… » ou cliquez sur un territoire proposé.\n4. Consultez la carte mise à jour.\n5. Pour changer de sélection, revenez à la liste des filtres.\nSi vous m’indiquez le nom du territoire, je peux vous préciser quel filtre utiliser.';
-  }
-  if (includesAny(t, ['legende', 'symbole', 'couleur de la carte'])) {
-    return 'Pour comprendre les symboles de la carte, consultez le panneau de droite où sont affichées les rubriques et leurs légendes. Selon la carte, un bouton de légende ou de couches est également disponible parmi les outils cartographiques. Si une légende indique qu’aucune information n’est disponible, cela dépend de la couche affichée.';
-  }
-  if (includesAny(t, ['couche', 'layer', 'afficher une donnee', 'activer', 'masquer', 'superposer'])) {
-    return 'Pour consulter les couches :\n1. Choisissez une rubrique dans le menu supérieur.\n2. Sur la carte, utilisez l’icône représentant des couches empilées dans les outils à droite.\n3. Parcourez les couches proposées et activez ou désactivez celles dont le contrôle est disponible.\n4. Vérifiez le panneau de légende sur la droite.\n5. Cliquez sur un élément cartographique pour obtenir sa fiche si cette fonction est proposée.';
-  }
-  if (includesAny(t, ['zoom', 'dezoomer', 'dezoome', 'deplacer la carte', 'se deplacer', 'outil', 'naviguer', 'navigation'])) {
-    return 'Pour vous déplacer dans le portrait :\n1. Cliquez sur l’onglet souhaité en haut de page.\n2. Déplacez la carte en maintenant le clic de la souris.\n3. Zoomez ou dézoomez avec la molette ou les outils de zoom, lorsqu’ils sont visibles.\n4. Ouvrez les outils cartographiques sur la droite pour afficher les couches ou les autres commandes disponibles.\n5. Utilisez les filtres à gauche pour consulter un territoire précis.';
-  }
-  if (includesAny(t, ['inondation', 'risque', 'crue', 'alea'])) {
-    return 'Pour consulter les risques liés à l’eau :\n1. Cliquez sur « Risques liés à l’eau » dans le menu supérieur.\n2. Sélectionnez un territoire avec les filtres de gauche, si nécessaire.\n3. Consultez les informations et les couches disponibles sur cette page.\n4. Utilisez la légende à droite pour identifier ce qui est représenté.\nVous pouvez me demander comment afficher une couche ou choisir un SAGE.';
-  }
-  if (includesAny(t, ['biodiversite', 'zone humide', 'milieu humide', 'milieux aquatiques'])) {
-    return 'Pour consulter les milieux humides et aquatiques :\n1. Cliquez sur « Biodiversité & milieux humides/aquatiques » dans le menu du haut.\n2. Consultez la carte et les rubriques disponibles.\n3. Utilisez les filtres territoriaux et la légende si ces fonctions sont proposées sur la page.';
-  }
-  if (includesAny(t, ['petit cycle', 'usage de l eau', 'usages de l eau', 'patrimoine lie', 'patrimoine de l eau', 'energie', 'mobilite'])) {
-    return 'Pour accéder à une autre rubrique du Portrait de l’Eau, utilisez le menu horizontal en haut de la page. Certaines rubriques étaient indiquées comme « en cours de construction » sur la présentation de l’accueil : leur contenu peut évoluer. Si vous ne trouvez pas une information, contactez l’Agence.';
-  }
-  if (includesAny(t, ['contact', 'technicien', 'probleme', 'bug', 'difficulte', 'ne marche pas', 'erreur', 'assistance'])) {
-    return 'Si vous rencontrez une difficulté :\n1. Cliquez sur « Contactez-nous » en haut à droite du portail.\n2. Indiquez la rubrique consultée, le filtre choisi et ce qui ne fonctionne pas.\n3. Ajoutez une capture d’écran si possible.\nVous pouvez aussi utiliser la page de contact de l’Agence : ' + CONTACT_URL;
-  }
+
   if (includesAny(t, ['bonjour', 'bonsoir', 'salut', 'hello', 'merci'])) {
-    return 'Bonjour ! Je peux vous aider à utiliser le Portrait interactif de l’Eau : trouver une rubrique, afficher une couche, comprendre la légende, sélectionner un SAGE ou utiliser les outils de la carte. Quelle action souhaitez-vous réaliser ?';
+    return 'Bonjour ! Je vous aide à utiliser le Portrait interactif de l’Eau : rubriques, carte, couches, légende et filtres. Quelle action souhaitez-vous réaliser ?';
   }
-  return 'Je vous aide à utiliser le Portrait interactif de l’Eau. Précisez ce que vous cherchez à faire : accéder à une rubrique, trouver une couche, utiliser la légende, sélectionner un territoire ou contacter l’Agence. Vous pouvez aussi cliquer sur une des questions proposées ci-dessous.';
+
+  if (includesAny(t, ['sage', 'intercommunal', 'epci', 'bassin versant', 'filtre', 'filtrer', 'selectionner', 'choisir un territoire', 'recherche de territoire'])) {
+    return 'Pour sélectionner un territoire :\n1. Ouvrez une rubrique cartographique dans le menu supérieur.\n2. Dans la colonne de gauche, choisissez « Filtrer par SAGE », « Filtrer par intercommunalités » ou « Filtre par bassin versant ».\n3. Utilisez « Recherche… » ou sélectionnez un territoire dans la liste.\n4. Consultez la carte actualisée. Pour modifier votre sélection, retournez dans le filtre.';
+  }
+
+  if (includesAny(t, ['legende', 'symbole', 'signification des couleurs', 'couleur de la carte'])) {
+    return 'Pour lire la légende :\n1. Ouvrez la rubrique cartographique souhaitée.\n2. Regardez le panneau de droite de la carte, qui affiche les rubriques et les symboles disponibles.\n3. Utilisez les outils de légende ou de couches si ces commandes sont visibles.\n4. Comparez les symboles affichés sur la carte avec la légende. Certaines couches peuvent ne pas fournir de légende.';
+  }
+
+  if (includesAny(t, ['couche', 'layer', 'afficher une donnee', 'activer', 'masquer', 'superposer', 'afficher la carte', 'voir sur la carte'])) {
+    return 'Pour afficher les couches :\n1. Ouvrez une rubrique depuis le menu en haut.\n2. Repérez l’icône des couches empilées dans les outils de la carte à droite.\n3. Affichez la liste des couches et utilisez les commandes disponibles pour les consulter, les activer ou les masquer.\n4. Regardez le panneau de légende à droite pour comprendre les symboles.\n5. Cliquez sur un objet cartographique si une fenêtre d’information est proposée.';
+  }
+
+  if (includesAny(t, ['zoom', 'dezoomer', 'dezoome', 'deplacer la carte', 'se deplacer', 'outil', 'naviguer', 'navigation', 'plein ecran', 'recentrer', 'chercher sur la carte'])) {
+    return 'Pour utiliser la carte :\n1. Ouvrez l’onglet souhaité dans le menu supérieur.\n2. Déplacez la carte avec la souris ou le geste tactile.\n3. Zoomez et dézoomez avec la molette ou les commandes disponibles.\n4. Sur la droite, ouvrez les outils de recherche, de couches ou d’affichage proposés.\n5. Si besoin, affinez le territoire à l’aide des filtres à gauche.';
+  }
+
+  if (includesAny(t, ['inondation', 'risque lie a l eau', 'risques lies a l eau', 'crue', 'alea'])) {
+    return 'Pour accéder à la rubrique concernée :\n1. Cliquez sur « Risques liés à l’eau » dans le menu supérieur.\n2. Choisissez un territoire dans les filtres de gauche si nécessaire.\n3. Consultez les couches et la légende affichées sur la carte.\n4. Zoomez ou cliquez sur un élément pour obtenir les informations disponibles.';
+  }
+
+  if (includesAny(t, ['biodiversite', 'zone humide', 'milieu humide', 'milieux aquatiques'])) {
+    return 'Pour trouver cette rubrique :\n1. Cliquez sur « Biodiversité & milieux humides/aquatiques » en haut du portrait.\n2. Consultez les couches et les symboles disponibles sur la carte.\n3. Utilisez les filtres de territoire et le panneau de légende si présents.';
+  }
+
+  if (includesAny(t, ['petit cycle', 'usage de l eau', 'usages de l eau', 'patrimoine lie', 'patrimoine de l eau', 'accueil', 'rubrique', 'onglet', 'menu', 'page du portrait'])) {
+    return 'Pour vous rendre dans une rubrique, utilisez le menu horizontal en haut du portail : Accueil, Risques liés à l’eau, Biodiversité & milieux humides/aquatiques, Petit cycle de l’eau, Usages de l’Eau ou Patrimoine lié à l’eau. Certaines rubriques peuvent être en cours de construction. Si une fonctionnalité attendue est absente, contactez l’Agence.';
+  }
+
+  if (includesAny(t, ['cours d eau', 'riviere', 'reseau hydrographique', 'hydrographie'])) {
+    return 'Pour consulter les cours d’eau sur la carte :\n1. Ouvrez la rubrique cartographique concernée.\n2. Regardez le panneau de droite « Périmètres & Habillage », puis « Réseau hydrographique » ou « Cours d’eau », si ces éléments sont affichés.\n3. Utilisez les outils de couches et zoomez sur la zone souhaitée.';
+  }
+
+  // Toute autre demande est adressée à un interlocuteur de l'Agence.
+  return agency;
 }
 function answer(question) {
   const q = question.trim();
