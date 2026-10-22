@@ -1,105 +1,1009 @@
-<!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Assistant — Portrait interactif de l’Eau</title><style>
-:root{font-family:Arial,Helvetica,sans-serif;color:#23343d;background:#eef1f3}*{box-sizing:border-box}body{margin:0;padding:0}button,input,textarea{font:inherit}button{cursor:pointer}.shell{width:100%;max-width:470px;height:100dvh;min-height:390px;max-height:850px;margin:auto;display:flex;flex-direction:column;background:#fff;box-shadow:0 8px 28px #1d343c22}.head{background:#213943;color:white;display:flex;gap:12px;align-items:center;padding:14px 16px;flex-shrink:0}.drop{background:#f0e222;color:#23343d;padding:9px;border-radius:10px;font-size:20px}.head strong{font-size:14px;display:block}.head small{font-size:11px;color:#cfe1e4}.head .reset{margin-left:auto;background:none;color:#e7eeee;border:1px solid #6c848b;padding:6px 9px;border-radius:7px;font-size:12px}.messages{flex:1;overflow-y:auto;padding:18px 15px;background:#f4f7f8;display:flex;flex-direction:column;gap:12px}.msg{max-width:93%;padding:12px 13px;border-radius:13px;font-size:13px;line-height:1.58;white-space:pre-wrap;overflow-wrap:anywhere}.bot{align-self:flex-start;background:white;border:1px solid #dce5e9;border-top-left-radius:3px}.user{align-self:flex-end;background:#f0e222;color:#1e2c34;border-top-right-radius:3px}.msg a{color:#145e87}.label{font-size:11px;color:#61727b}.quick{padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid #e8ecee;max-height:108px;overflow:auto}.quick button{border:1px solid #cddce2;border-radius:17px;background:white;color:#244050;padding:7px 10px;font-size:11px}.quick button:hover{background:#f5f0c5}.entry{display:flex;gap:7px;padding:10px;border-top:1px solid #e4eaed}.entry textarea{flex:1;resize:none;min-height:43px;max-height:100px;padding:10px;border:1px solid #ccd7da;border-radius:9px;font-size:13px}.entry button{border:0;background:#f0e222;border-radius:9px;padding:0 13px;font-weight:bold;color:#1b262b}.busy{opacity:.7}a{color:#0b5f89}@media(min-width:600px){body{padding:8px}.shell{border-radius:13px;overflow:hidden;height:calc(100dvh - 16px)}}
-</style></head><body><main class="shell" aria-label="Assistant du Portrait de l'Eau"><header class="head"><span class="drop" aria-hidden="true">💧</span><div><strong>Assistant du Portrait de l’Eau</strong><small>Aide à l’utilisation du portrait</small></div><button class="reset" id="reset" type="button">Effacer</button></header><section id="messages" class="messages" aria-live="polite"></section><nav class="quick" aria-label="Questions proposées"><button data-question="Où trouver les couches et la légende ?">Couches & légende</button><button data-question="Comment sélectionner un SAGE, une intercommunalité ou un bassin versant ?">Filtres</button><button data-question="Comment utiliser les outils de la carte ?">Outils de la carte</button><button data-question="Comment contacter l'Agence ?">Contacter l’Agence</button></nav><form id="form" class="entry"><textarea id="question" rows="2" maxlength="2000" placeholder="Posez votre question sur le portrait…" aria-label="Votre question" required></textarea><button id="send" type="submit">Envoyer</button></form></main><script>
-const CONTACT_URL = 'https://www.aud-stomer.fr/contact/';
-const messages = document.getElementById('messages');
-const field = document.getElementById('question');
-const form = document.getElementById('form');
 
-function say(text, who = 'bot') {
-  const element = document.createElement('div');
-  element.className = 'msg ' + who;
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Assistant - Portrait interactif de l'Eau</title>
+
+<style>
+
+/* ===== BASE ===== */
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #23343d;
+  background: #eef1f3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ===== CHATBOT ===== */
+
+.shell {
+  width: 100%;
+  max-width: 470px;
+
+  height: 100vh;
+  height: 100dvh;
+
+  max-height: 850px;
+
+  margin: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #ffffff;
+
+  overflow: hidden;
+
+  box-shadow: 0 8px 28px rgba(29,52,60,0.13);
+}
+
+/* ===== EN-TÊTE ===== */
+
+.head {
+  background: #213943;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+  padding: 14px 16px;
+
+  flex-shrink: 0;
+}
+
+.drop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  background: #f0e222;
+  color: #23343d;
+
+  border-radius: 10px;
+
+  font-size: 21px;
+  flex-shrink: 0;
+}
+
+.head-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.head strong {
+  display: block;
+
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.head small {
+  display: block;
+  margin-top: 3px;
+
+  font-size: 11px;
+  color: #cfe1e4;
+}
+
+.reset {
+  background: transparent;
+  color: #e7eeee;
+
+  border: 1px solid #6c848b;
+  padding: 7px 10px;
+
+  border-radius: 7px;
+  font-size: 12px;
+
+  flex-shrink: 0;
+}
+
+/* ===== MESSAGES ===== */
+
+.messages {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 18px 15px;
+
+  background: #f4f7f8;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.msg {
+  max-width: 93%;
+
+  padding: 12px 13px;
+
+  border-radius: 13px;
+
+  font-size: 13px;
+  line-height: 1.58;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bot {
+  align-self: flex-start;
+
+  background: #ffffff;
+
+  border: 1px solid #dce5e9;
+  border-top-left-radius: 3px;
+}
+
+.user {
+  align-self: flex-end;
+
+  background: #f0e222;
+  color: #1e2c34;
+
+  border-top-right-radius: 3px;
+}
+
+/* ===== QUESTIONS RAPIDES ===== */
+
+.quick {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  padding: 10px 12px;
+
+  border-top: 1px solid #e8ecee;
+
+  background: #ffffff;
+
+  flex-shrink: 0;
+
+  max-height: 108px;
+  overflow-y: auto;
+}
+
+.quick button {
+  border: 1px solid #cddce2;
+
+  border-radius: 17px;
+
+  background: #ffffff;
+  color: #244050;
+
+  padding: 8px 11px;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+.quick button:hover {
+  background: #f5f0c5;
+  border-color: #e8d92a;
+}
+
+/* ===== SAISIE ===== */
+
+.entry {
+  display: flex;
+  align-items: flex-end;
+
+  gap: 8px;
+  padding: 10px;
+
+  border-top: 1px solid #e4eaed;
+
+  background: #ffffff;
+
+  flex-shrink: 0;
+}
+
+.entry textarea {
+  flex: 1;
+  min-width: 0;
+
+  resize: none;
+
+  min-height: 44px;
+  max-height: 110px;
+
+  padding: 12px;
+
+  border: 1px solid #ccd7da;
+  border-radius: 9px;
+
+  font-size: 14px;
+  line-height: 1.4;
+
+  outline: none;
+}
+
+.entry textarea:focus {
+  border-color: #849da6;
+}
+
+.entry button {
+  border: none;
+
+  background: #f0e222;
+  color: #1b262b;
+
+  border-radius: 9px;
+
+  min-height: 44px;
+
+  padding: 0 14px;
+
+  font-size: 13px;
+  font-weight: bold;
+
+  flex-shrink: 0;
+}
+
+.entry button:hover {
+  background: #e2d619;
+}
+
+/* ===== ORDINATEUR ===== */
+
+@media (min-width: 601px) {
+
+  body {
+    padding: 8px;
+  }
+
+  .shell {
+    border-radius: 13px;
+
+    height: calc(100vh - 16px);
+    height: calc(100dvh - 16px);
+  }
+
+}
+
+/* ===== TABLETTE ===== */
+
+@media (max-width: 600px) {
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: none;
+
+    height: 100vh;
+    height: 100dvh;
+
+    max-height: none;
+    min-height: 0;
+
+    margin: 0;
+
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .head {
+    padding: 12px 13px;
+    gap: 10px;
+  }
+
+  .messages {
+    padding: 13px 11px;
+    gap: 10px;
+  }
+
+  .msg {
+    max-width: 92%;
+    font-size: 13px;
+    padding: 10px 11px;
+  }
+
+  .quick {
+    flex-wrap: nowrap;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    max-height: none;
+
+    padding: 9px 10px;
+
+    scrollbar-width: thin;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .quick button {
+    flex: 0 0 auto;
+  }
+
+  .entry {
+    padding: 9px 10px;
+  }
+
+}
+
+/* ===== PETITS TÉLÉPHONES ===== */
+
+@media (max-width: 390px) {
+
+  .head {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .drop {
+    width: 34px;
+    height: 34px;
+
+    font-size: 18px;
+  }
+
+  .head strong {
+    font-size: 12px;
+  }
+
+  .head small {
+    font-size: 10px;
+  }
+
+  .reset {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .msg {
+    font-size: 12.5px;
+  }
+
+  .entry textarea {
+    font-size: 16px;
+  }
+
+  .entry button {
+    padding: 0 11px;
+  }
+
+}
+
+/* ===== TÉLÉPHONES EN PAYSAGE ===== */
+
+@media (max-height: 480px) {
+
+  .head {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .drop {
+    width: 32px;
+    height: 32px;
+  }
+
+  .messages {
+    padding: 9px 11px;
+  }
+
+  .quick {
+    padding: 6px 10px;
+  }
+
+  .entry {
+    padding: 6px 10px;
+  }
+
+}
+
+/* ===== ZONES DE SÉCURITÉ MOBILE ===== */
+
+@media (max-width: 600px) {
+
+  .head {
+    padding-top:
+      max(12px, env(safe-area-inset-top));
+  }
+
+  .entry {
+    padding-bottom:
+      max(10px, env(safe-area-inset-bottom));
+  }
+
+}
+
+/* ===== ACCESSIBILITÉ ===== */
+
+button:focus-visible {
+  outline: 2px solid #213943;
+  outline-offset: 2px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<main class="shell"
+aria-label="Assistant du Portrait de l'Eau">
+
+<!-- EN-TÊTE -->
+
+<header class="head">
+
+  <span class="drop" aria-hidden="true">
+    💧
+  </span>
+
+  <div class="head-title">
+
+    <strong>
+      Assistant du Portrait de l’Eau
+    </strong>
+
+    <small>
+      Aide à l’utilisation du portrait
+    </small>
+
+  </div>
+
+  <button
+    class="reset"
+    id="reset"
+    type="button">
+    Effacer
+  </button>
+
+</header>
+
+<!-- CONVERSATION -->
+
+<section
+  id="messages"
+  class="messages"
+  aria-live="polite"
+  aria-label="Conversation">
+</section>
+
+<!-- QUESTIONS RAPIDES -->
+
+<nav class="quick"
+aria-label="Questions proposées">
+
+  <button
+    type="button"
+    data-question="Où trouver les couches et la légende ?">
+    Couches & légende
+  </button>
+
+  <button
+    type="button"
+    data-question="Comment sélectionner un SAGE, une intercommunalité ou un bassin versant ?">
+    Filtres
+  </button>
+
+  <button
+    type="button"
+    data-question="Comment utiliser les outils de la carte ?">
+    Outils de la carte
+  </button>
+
+  <button
+    type="button"
+    data-question="Comment contacter l'Agence ?">
+    Contacter l’Agence
+  </button>
+
+</nav>
+
+<!-- ZONE DE SAISIE -->
+
+<form id="form" class="entry">
+
+  <textarea
+    id="question"
+    rows="1"
+    maxlength="2000"
+    placeholder="Posez votre question..."
+    aria-label="Votre question"
+    required></textarea>
+
+  <button id="send" type="submit">
+    Envoyer
+  </button>
+
+</form>
+
+</main>
+
+<script>
+
+/* ===== PARAMÈTRES ===== */
+
+const CONTACT_URL =
+  "https://www.aud-stomer.fr/contact/";
+
+const messages =
+  document.getElementById("messages");
+
+const field =
+  document.getElementById("question");
+
+const form =
+  document.getElementById("form");
+
+/* ===== AFFICHAGE DES MESSAGES ===== */
+
+function say(text, who = "bot") {
+
+  const element = document.createElement("div");
+
+  element.className = "msg " + who;
+
   element.textContent = text;
+
   messages.appendChild(element);
+
   messages.scrollTop = messages.scrollHeight;
+
 }
+
+/* ===== NORMALISATION ===== */
+
 function normalize(value) {
-  return value.toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '').replace(/[’']/g, ' ')
-    .replace(/\s+/g, ' ').trim();
+
+  return value.toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[’']/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
 }
-function includesAny(text, words) { return words.some(word => text.includes(word)); }
+
+function includesAny(text, words) {
+
+  return words.some(word => text.includes(word));
+
+}
+
+/* ===== RÉPONSES ===== */
+
 function respond(question) {
+
   const t = normalize(question);
-  const agency = 'Pour cette demande, je vous invite à contacter l’Agence en cliquant sur « Contactez-nous » en haut à droite du portail : ' + CONTACT_URL;
 
-  // Questions hors assistance à l'utilisation : orientation vers l'Agence.
+  const agency =
+    "Pour cette demande, je vous invite à contacter " +
+    "l’Agence en cliquant sur « Contactez-nous » " +
+    "en haut à droite du portail : " +
+    CONTACT_URL;
+
+  /* QUESTIONS HORS UTILISATION */
+
   if (includesAny(t, [
-    'analyse', 'analyser', 'synthese', 'diagnostic', 'rapport', 'etude',
-    'statistique', 'chiffre', 'pourcentage', 'superficie', 'calcul',
-    'comparer', 'comparaison', 'evolution', 'prevision', 'interpretation',
-    'donnees brutes', 'telecharger des donnees', 'export de donnees',
-    'prix', 'devis', 'recrutement', 'emploi', 'actualite', 'meteo'
-  ])) return agency;
+    "analyse",
+    "analyser",
+    "synthese",
+    "diagnostic",
+    "rapport",
+    "etude",
+    "statistique",
+    "chiffre",
+    "pourcentage",
+    "superficie",
+    "calcul",
+    "comparer",
+    "comparaison",
+    "evolution",
+    "prevision",
+    "interpretation",
+    "donnees brutes",
+    "telecharger des donnees",
+    "export de donnees",
+    "prix",
+    "devis",
+    "recrutement",
+    "emploi",
+    "actualite",
+    "meteo"
+  ])) {
 
-  if (includesAny(t, ['contact', 'technicien', 'probleme', 'bug', 'difficulte', 'ne marche pas', 'erreur', 'assistance', 'bloque', 'panne'])) {
-    return 'Pour signaler une difficulté, cliquez sur « Contactez-nous » en haut à droite du portail. Précisez la rubrique utilisée et décrivez le problème. Si possible, ajoutez une capture d’écran.\n' + CONTACT_URL;
+    return agency;
+
   }
 
-  if (includesAny(t, ['bonjour', 'bonsoir', 'salut', 'hello', 'merci'])) {
-    return 'Bonjour ! Je vous aide à utiliser le Portrait interactif de l’Eau : rubriques, carte, couches, légende et filtres. Quelle action souhaitez-vous réaliser ?';
+  /* CONTACT */
+
+  if (includesAny(t, [
+    "contact",
+    "technicien",
+    "probleme",
+    "bug",
+    "difficulte",
+    "ne marche pas",
+    "erreur",
+    "assistance",
+    "bloque",
+    "panne"
+  ])) {
+
+    return "Pour signaler une difficulté, " +
+      "cliquez sur « Contactez-nous » en haut " +
+      "à droite du portail.\n\n" +
+      "Précisez la rubrique utilisée, " +
+      "le problème rencontré et, si possible, " +
+      "ajoutez une capture d’écran.\n\n" +
+      CONTACT_URL;
+
   }
 
-  if (includesAny(t, ['sage', 'intercommunal', 'epci', 'bassin versant', 'filtre', 'filtrer', 'selectionner', 'choisir un territoire', 'recherche de territoire'])) {
-    return 'Pour sélectionner un territoire :\n1. Ouvrez une rubrique cartographique dans le menu supérieur.\n2. Dans la colonne de gauche, choisissez « Filtrer par SAGE », « Filtrer par intercommunalités » ou « Filtre par bassin versant ».\n3. Utilisez « Recherche… » ou sélectionnez un territoire dans la liste.\n4. Consultez la carte actualisée. Pour modifier votre sélection, retournez dans le filtre.';
+  /* SALUTATIONS */
+
+  if (includesAny(t, [
+    "bonjour",
+    "bonsoir",
+    "salut",
+    "hello",
+    "merci"
+  ])) {
+
+    return "Bonjour ! Je vous aide à utiliser " +
+      "le Portrait interactif de l’Eau : " +
+      "rubriques, carte, couches, légende et filtres. " +
+      "Quelle action souhaitez-vous réaliser ?";
+
   }
 
-  if (includesAny(t, ['legende', 'symbole', 'signification des couleurs', 'couleur de la carte'])) {
-    return 'Pour lire la légende :\n1. Ouvrez la rubrique cartographique souhaitée.\n2. Regardez le panneau de droite de la carte, qui affiche les rubriques et les symboles disponibles.\n3. Utilisez les outils de légende ou de couches si ces commandes sont visibles.\n4. Comparez les symboles affichés sur la carte avec la légende. Certaines couches peuvent ne pas fournir de légende.';
+  /* FILTRES */
+
+  if (includesAny(t, [
+    "sage",
+    "intercommunal",
+    "epci",
+    "bassin versant",
+    "filtre",
+    "filtrer",
+    "selectionner",
+    "choisir un territoire",
+    "recherche de territoire"
+  ])) {
+
+    return "Pour sélectionner un territoire :\n\n" +
+      "1. Ouvrez une rubrique cartographique " +
+      "dans le menu supérieur.\n\n" +
+      "2. Dans la colonne de gauche, choisissez " +
+      "« Filtrer par SAGE », « Filtrer par " +
+      "intercommunalités » ou « Filtre par " +
+      "bassin versant ».\n\n" +
+      "3. Utilisez « Recherche… » ou sélectionnez " +
+      "un territoire dans la liste.\n\n" +
+      "4. Consultez la carte actualisée. " +
+      "Pour modifier votre sélection, " +
+      "retournez dans le filtre.";
+
   }
 
-  if (includesAny(t, ['couche', 'layer', 'afficher une donnee', 'activer', 'masquer', 'superposer', 'afficher la carte', 'voir sur la carte'])) {
-    return 'Pour afficher les couches :\n1. Ouvrez une rubrique depuis le menu en haut.\n2. Repérez l’icône des couches empilées dans les outils de la carte à droite.\n3. Affichez la liste des couches et utilisez les commandes disponibles pour les consulter, les activer ou les masquer.\n4. Regardez le panneau de légende à droite pour comprendre les symboles.\n5. Cliquez sur un objet cartographique si une fenêtre d’information est proposée.';
+  /* LÉGENDE */
+
+  if (includesAny(t, [
+    "legende",
+    "symbole",
+    "signification des couleurs",
+    "couleur de la carte"
+  ])) {
+
+    return "Pour lire la légende :\n\n" +
+      "1. Ouvrez la rubrique cartographique souhaitée.\n\n" +
+      "2. Regardez le panneau de droite de la carte.\n\n" +
+      "3. Utilisez les outils de légende ou de couches " +
+      "si ces commandes sont visibles.\n\n" +
+      "4. Comparez les symboles affichés sur la carte " +
+      "avec la légende. Certaines couches peuvent " +
+      "ne pas fournir de légende.";
+
   }
 
-  if (includesAny(t, ['zoom', 'dezoomer', 'dezoome', 'deplacer la carte', 'se deplacer', 'outil', 'naviguer', 'navigation', 'plein ecran', 'recentrer', 'chercher sur la carte'])) {
-    return 'Pour utiliser la carte :\n1. Ouvrez l’onglet souhaité dans le menu supérieur.\n2. Déplacez la carte avec la souris ou le geste tactile.\n3. Zoomez et dézoomez avec la molette ou les commandes disponibles.\n4. Sur la droite, ouvrez les outils de recherche, de couches ou d’affichage proposés.\n5. Si besoin, affinez le territoire à l’aide des filtres à gauche.';
+  /* COUCHES */
+
+  if (includesAny(t, [
+    "couche",
+    "layer",
+    "afficher une donnee",
+    "activer",
+    "masquer",
+    "superposer",
+    "afficher la carte",
+    "voir sur la carte"
+  ])) {
+
+    return "Pour afficher les couches :\n\n" +
+      "1. Ouvrez une rubrique depuis le menu en haut.\n\n" +
+      "2. Repérez l’icône des couches empilées " +
+      "dans les outils de la carte à droite.\n\n" +
+      "3. Affichez la liste des couches et utilisez " +
+      "les commandes disponibles pour les consulter, " +
+      "les activer ou les masquer.\n\n" +
+      "4. Regardez le panneau de légende à droite " +
+      "pour comprendre les symboles.\n\n" +
+      "5. Cliquez sur un objet cartographique " +
+      "si une fenêtre d’information est proposée.";
+
   }
 
-  if (includesAny(t, ['inondation', 'risque lie a l eau', 'risques lies a l eau', 'crue', 'alea'])) {
-    return 'Pour accéder à la rubrique concernée :\n1. Cliquez sur « Risques liés à l’eau » dans le menu supérieur.\n2. Choisissez un territoire dans les filtres de gauche si nécessaire.\n3. Consultez les couches et la légende affichées sur la carte.\n4. Zoomez ou cliquez sur un élément pour obtenir les informations disponibles.';
+  /* OUTILS CARTOGRAPHIQUES */
+
+  if (includesAny(t, [
+    "zoom",
+    "dezoomer",
+    "dezoome",
+    "deplacer la carte",
+    "se deplacer",
+    "outil",
+    "naviguer",
+    "navigation",
+    "plein ecran",
+    "recentrer",
+    "chercher sur la carte"
+  ])) {
+
+    return "Pour utiliser la carte :\n\n" +
+      "1. Ouvrez l’onglet souhaité " +
+      "dans le menu supérieur.\n\n" +
+      "2. Déplacez la carte avec la souris " +
+      "ou le geste tactile.\n\n" +
+      "3. Zoomez et dézoomez avec la molette " +
+      "ou les commandes disponibles.\n\n" +
+      "4. Sur la droite, ouvrez les outils de recherche, " +
+      "de couches ou d’affichage proposés.\n\n" +
+      "5. Si besoin, affinez le territoire " +
+      "à l’aide des filtres à gauche.";
+
   }
 
-  if (includesAny(t, ['biodiversite', 'zone humide', 'milieu humide', 'milieux aquatiques'])) {
-    return 'Pour trouver cette rubrique :\n1. Cliquez sur « Biodiversité & milieux humides/aquatiques » en haut du portrait.\n2. Consultez les couches et les symboles disponibles sur la carte.\n3. Utilisez les filtres de territoire et le panneau de légende si présents.';
+  /* RISQUES LIÉS À L'EAU */
+
+  if (includesAny(t, [
+    "inondation",
+    "risque lie a l eau",
+    "risques lies a l eau",
+    "crue",
+    "alea"
+  ])) {
+
+    return "Pour accéder à cette rubrique :\n\n" +
+      "1. Cliquez sur « Risques liés à l’eau » " +
+      "dans le menu supérieur.\n\n" +
+      "2. Choisissez un territoire dans les " +
+      "filtres de gauche si nécessaire.\n\n" +
+      "3. Consultez les couches et la légende " +
+      "affichées sur la carte.\n\n" +
+      "4. Zoomez ou cliquez sur un élément " +
+      "pour obtenir les informations disponibles.";
+
   }
 
-  if (includesAny(t, ['petit cycle', 'usage de l eau', 'usages de l eau', 'patrimoine lie', 'patrimoine de l eau', 'accueil', 'rubrique', 'onglet', 'menu', 'page du portrait'])) {
-    return 'Pour vous rendre dans une rubrique, utilisez le menu horizontal en haut du portail : Accueil, Risques liés à l’eau, Biodiversité & milieux humides/aquatiques, Petit cycle de l’eau, Usages de l’Eau ou Patrimoine lié à l’eau. Certaines rubriques peuvent être en cours de construction. Si une fonctionnalité attendue est absente, contactez l’Agence.';
+  /* BIODIVERSITÉ */
+
+  if (includesAny(t, [
+    "biodiversite",
+    "zone humide",
+    "milieu humide",
+    "milieux aquatiques"
+  ])) {
+
+    return "Pour trouver cette rubrique :\n\n" +
+      "1. Cliquez sur « Biodiversité & milieux " +
+      "humides/aquatiques » en haut du portrait.\n\n" +
+      "2. Consultez les couches et les symboles " +
+      "disponibles sur la carte.\n\n" +
+      "3. Utilisez les filtres de territoire " +
+      "et le panneau de légende si présents.";
+
   }
 
-  if (includesAny(t, ['cours d eau', 'riviere', 'reseau hydrographique', 'hydrographie'])) {
-    return 'Pour consulter les cours d’eau sur la carte :\n1. Ouvrez la rubrique cartographique concernée.\n2. Regardez le panneau de droite « Périmètres & Habillage », puis « Réseau hydrographique » ou « Cours d’eau », si ces éléments sont affichés.\n3. Utilisez les outils de couches et zoomez sur la zone souhaitée.';
+  /* RUBRIQUES */
+
+  if (includesAny(t, [
+    "petit cycle",
+    "usage de l eau",
+    "usages de l eau",
+    "patrimoine lie",
+    "patrimoine de l eau",
+    "accueil",
+    "rubrique",
+    "onglet",
+    "menu",
+    "page du portrait"
+  ])) {
+
+    return "Pour naviguer entre les rubriques, " +
+      "utilisez le menu horizontal en haut du portail :\n\n" +
+      "• Accueil\n" +
+      "• Risques liés à l’eau\n" +
+      "• Biodiversité & milieux humides/aquatiques\n" +
+      "• Petit cycle de l’eau\n" +
+      "• Usages de l’Eau\n" +
+      "• Patrimoine lié à l’eau\n\n" +
+      "Certaines rubriques peuvent être " +
+      "en cours de construction. " +
+      "Si une fonctionnalité est absente, " +
+      "contactez l’Agence.";
+
   }
 
-  // Toute autre demande est adressée à un interlocuteur de l'Agence.
+  /* COURS D'EAU */
+
+  if (includesAny(t, [
+    "cours d eau",
+    "riviere",
+    "reseau hydrographique",
+    "hydrographie"
+  ])) {
+
+    return "Pour consulter les cours d’eau :\n\n" +
+      "1. Ouvrez la rubrique cartographique concernée.\n\n" +
+      "2. Regardez le panneau de droite " +
+      "« Périmètres & Habillage ».\n\n" +
+      "3. Recherchez « Réseau hydrographique » " +
+      "ou « Cours d’eau » si ces éléments sont affichés.\n\n" +
+      "4. Utilisez les outils de couches et zoomez " +
+      "sur la zone souhaitée.";
+
+  }
+
+  /* AUTRES QUESTIONS */
+
   return agency;
+
 }
+
+/* ===== ENVOI DES QUESTIONS ===== */
+
 function answer(question) {
+
   const q = question.trim();
+
   if (!q) return;
-  say(q, 'user');
-  field.value = '';
+
+  say(q, "user");
+
+  field.value = "";
+
+  field.style.height = "";
+
   say(respond(q));
+
   field.focus();
+
 }
-form.addEventListener('submit', event => {
+
+/* ===== FORMULAIRE ===== */
+
+form.addEventListener("submit", function(event) {
+
   event.preventDefault();
+
   answer(field.value);
+
 });
-document.querySelectorAll('[data-question]').forEach(button => {
-  button.addEventListener('click', () => answer(button.dataset.question));
-});
-field.addEventListener('keydown', event => {
-  if (event.key === 'Enter' && !event.shiftKey) {
+
+/* ===== QUESTIONS RAPIDES ===== */
+
+document.querySelectorAll("[data-question]")
+  .forEach(function(button) {
+
+    button.addEventListener("click", function() {
+
+      answer(button.dataset.question);
+
+    });
+
+  });
+
+/* ===== TOUCHE ENTRÉE ===== */
+
+field.addEventListener("keydown", function(event) {
+
+  if (event.key === "Enter" && !event.shiftKey) {
+
     event.preventDefault();
+
     form.requestSubmit();
+
   }
+
 });
-document.getElementById('reset').addEventListener('click', () => {
-  messages.replaceChildren();
-  say('Bonjour ! Je suis l’assistant du Portrait interactif de l’Eau. Je vous aide à trouver les rubriques, les couches, les légendes et les filtres. Comment puis-je vous guider ?');
+
+/* ===== ADAPTATION ZONE DE SAISIE ===== */
+
+field.addEventListener("input", function() {
+
+  this.style.height = "auto";
+
+  this.style.height =
+    Math.min(this.scrollHeight, 110) + "px";
+
 });
-say('Bonjour ! Je suis l’assistant du Portrait interactif de l’Eau. Je peux vous guider dans l’utilisation du portail : menus, cartes, couches, légendes et filtres. Comment puis-je vous aider ?');
-</script></body></html>
+
+/* ===== BOUTON EFFACER ===== */
+
+document.getElementById("reset")
+  .addEventListener("click", function() {
+
+    messages.replaceChildren();
+
+    say(
+      "Bonjour ! Je suis l’assistant du Portrait " +
+      "interactif de l’Eau. Je vous aide à trouver " +
+      "les rubriques, les couches, les légendes " +
+      "et les filtres. Comment puis-je vous guider ?"
+    );
+
+  });
+
+/* ===== MESSAGE D'ACCUEIL ===== */
+
+say(
+  "Bonjour ! Je suis l’assistant du Portrait " +
+  "interactif de l’Eau.\n\n" +
+  "Je peux vous guider dans l’utilisation " +
+  "du portail : menus, cartes, couches, " +
+  "légendes et filtres.\n\n" +
+  "Comment puis-je vous aider ?"
+);
+
+</script>
+
+</body>
+</html>
